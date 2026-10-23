@@ -1,0 +1,663 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Livret de tournage — Make</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f0038; --soft:#4a4a6a; --muted:#8a8aa0;
+  --accent:#7b1ad5; --accent-soft:#f3ecfb;
+  --surface:#ffffff; --white:#ffffff; --panel:#f7f7fa;
+  --border:#e3e2e8; --border-strong:#cfcdd8;
+  --alert:#b42318;
+  --radius:10px; --rlg:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--surface);line-height:1.7}
+
+.sidebar{position:fixed;top:0;left:0;width:290px;height:100vh;background:var(--ink);
+  padding:26px 14px;overflow-y:auto;z-index:100;transition:transform .3s}
+.sidebar .logo{font-size:18px;color:#fff;font-weight:700;padding:0 10px}
+.sidebar .sub{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;
+  letter-spacing:1.6px;margin:5px 0 22px;padding:0 10px}
+.nav-section{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;
+  letter-spacing:1.4px;padding:14px 10px 6px;font-weight:700}
+.sidebar a{display:flex;align-items:flex-start;gap:10px;padding:7px 10px;margin-bottom:1px;
+  color:rgba(255,255,255,.62);text-decoration:none;font-size:13px;font-weight:400;
+  border-radius:6px;line-height:1.4;transition:.15s}
+.sidebar a:hover,.sidebar a.active{background:rgba(255,255,255,.08);color:#fff}
+.sidebar .n{font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:rgba(255,255,255,.35);min-width:20px;flex-shrink:0}
+.sidebar .div{height:1px;background:rgba(255,255,255,.1);margin:14px 10px}
+.toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--ink);
+  color:#fff;border:none;border-radius:8px;padding:8px 12px;font-size:18px;cursor:pointer}
+
+.main{margin-left:290px;min-height:100vh}
+.hero{background:var(--ink);padding:56px 50px 48px}
+.hero-c{max-width:760px}
+.badge{display:inline-block;color:rgba(255,255,255,.5);font-size:11px;font-weight:600;
+  letter-spacing:1.4px;text-transform:uppercase;margin-bottom:14px}
+.hero h1{font-size:clamp(28px,4vw,40px);color:#fff;font-weight:700;line-height:1.2;margin-bottom:12px}
+.hero h1 em{font-style:normal;color:#fff}
+.hero-c>p{font-size:16px;color:rgba(255,255,255,.6);max-width:600px;margin-bottom:26px}
+.hero-tags{display:flex;gap:10px;flex-wrap:wrap}
+.hero-tags span{display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.75);
+  font-size:12.5px;background:rgba(255,255,255,.07);border-radius:6px;padding:6px 12px}
+.hero-tags .ic{font-size:13px;opacity:.75}
+
+.content{max-width:800px;margin:0 auto;padding:44px 32px 100px}
+.ch{margin-bottom:52px;scroll-margin-top:20px}
+.ch-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.ch-num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--muted);
+  flex-shrink:0}
+.ch h2{font-size:23px;font-weight:700;line-height:1.25}
+.card{background:var(--white);border-radius:var(--rlg);padding:30px;border:1px solid var(--border)}
+.card p{margin-bottom:14px;color:var(--soft);font-size:15px}
+.card p:last-child{margin-bottom:0}
+.card strong{color:var(--ink);font-weight:600}
+.card h3{font-size:18px;font-weight:700;color:var(--ink);margin:34px 0 12px;
+  padding-top:18px;border-top:1px solid var(--border)}
+.card h3:first-child{margin-top:0;padding-top:0;border-top:none}
+.card h4{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1.1px;
+  text-transform:uppercase;margin:20px 0 8px}
+.card ul{margin:10px 0 14px 20px;color:var(--soft);font-size:15px}
+.card li{margin-bottom:6px}
+.card a{color:var(--accent);font-weight:600}
+
+.analogy,.prereq,.warning-big{background:var(--panel);border-radius:var(--radius);
+  padding:18px 22px;margin:18px 0;border:1px solid var(--border);border-left:3px solid var(--border-strong)}
+.warning-big{border-left-color:var(--alert)}
+.analogy .al,.prereq .pl,.warning-big .wl{font-weight:700;color:var(--ink);font-size:12px;
+  letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.warning-big .wl{color:var(--alert)}
+.analogy p,.prereq p,.prereq li,.warning-big p{font-size:14.5px;color:var(--soft);margin:0}
+.prereq ul{list-style:none;padding:0;margin:6px 0 0}
+.prereq li{padding:5px 0 5px 22px;position:relative}
+.prereq li::before{content:'\2610';position:absolute;left:0;color:var(--muted)}
+
+.steps{counter-reset:s;list-style:none;padding:0;margin:16px 0}
+.steps li{counter-increment:s;position:relative;padding:12px 14px 12px 46px;margin-bottom:6px;
+  background:var(--white);border-radius:var(--radius);border:1px solid var(--border);
+  font-size:14.5px;color:var(--soft)}
+.steps li::before{content:counter(s);position:absolute;left:14px;top:14px;
+  color:var(--muted);font-size:12px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.steps li strong{color:var(--ink)}
+
+.tw{overflow-x:auto;margin:16px 0;border-radius:var(--radius);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead{background:var(--panel)}
+thead th{padding:11px 14px;text-align:left;color:var(--ink);font-weight:700;font-size:11px;
+  text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;border-bottom:1px solid var(--border-strong)}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--soft);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+.vide{color:var(--muted);font-style:italic;font-size:12px}
+.cap{font-size:12.5px;color:var(--muted);margin:-6px 0 16px}
+
+.tip{display:flex;gap:12px;padding:16px 20px;border-radius:var(--radius);margin:16px 0;
+  background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--border-strong)}
+.tip.warn,.tip.err{border-left-color:var(--alert)}
+.tip-i{font-size:16px;flex-shrink:0;margin-top:1px;opacity:.8}
+.tip-c{font-size:14px;color:var(--soft)}
+.tip-c strong{color:var(--ink)}
+.tip-c>strong:first-child{display:block;margin-bottom:3px}
+
+.vg{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:16px 0}
+.vc{background:var(--white);border-radius:var(--radius);padding:16px;border:1px solid var(--border)}
+.vc .vt{font-weight:700;color:var(--ink);font-size:14px;margin-bottom:4px}
+.vc .vd{font-size:13px;color:var(--soft)}
+.vc .ve{font-size:12px;color:var(--muted);margin-top:5px}
+
+.flow{display:flex;align-items:center;gap:0;margin:20px 0;flex-wrap:wrap;justify-content:center}
+.flow-node{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);
+  padding:12px 18px;text-align:center;min-width:120px}
+.flow-node .fl{font-size:20px;margin-bottom:4px;opacity:.8}
+.flow-node .fn2{font-weight:700;font-size:13px;color:var(--ink)}
+.flow-node .fd{font-size:11px;color:var(--muted)}
+.flow-arrow{font-size:18px;color:var(--muted);padding:0 8px;flex-shrink:0}
+
+.cbx{margin:16px 0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--panel)}
+.cbx-h{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:9px 14px;border-bottom:1px solid var(--border)}
+.cbx-l{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.7px}
+.cbx-b{background:var(--white);color:var(--ink);border:1px solid var(--border-strong);border-radius:6px;
+  padding:5px 13px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0}
+.cbx-b:hover{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.cbx-b.done{color:var(--accent);border-color:var(--accent)}
+.cbx-p{padding:14px 16px;margin:0;color:var(--ink);font-family:'JetBrains Mono',monospace;
+  font-size:12px;line-height:1.7;white-space:pre-wrap;overflow-x:auto;max-height:420px;overflow-y:auto}
+
+.dlb{display:flex;align-items:center;gap:14px;text-decoration:none;margin:14px 0;width:100%;
+  text-align:left;font-family:inherit;cursor:pointer;
+  background:var(--white);border:1px solid var(--accent);border-radius:var(--radius);
+  padding:14px 18px;transition:.15s}
+.dlb[disabled]{opacity:.5;cursor:default;border-color:var(--border)}
+.dlb:hover{background:var(--accent-soft)}
+.dlb-i{flex-shrink:0;width:34px;height:34px;border-radius:8px;background:var(--accent);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
+.dlb-t{display:flex;flex-direction:column;min-width:0}
+.dlb-t b{color:var(--ink);font-size:14.5px;font-weight:700}
+.dlb-t span{color:var(--muted);font-size:12.5px}
+
+.footer{text-align:center;padding:36px;color:var(--muted);font-size:12.5px;
+  border-top:1px solid var(--border);margin-top:36px}
+
+@media (max-width:800px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .toggle{display:block}
+  .main{margin-left:0}
+  .hero{padding:68px 20px 40px}
+  .content{padding:28px 16px 60px}
+  .card{padding:20px}
+  .flow{flex-direction:column}
+  .flow-arrow{transform:rotate(90deg)}
+}
+@media print{
+  .sidebar,.toggle,.cbx-b,.dlb{display:none !important}
+  .main{margin-left:0 !important}
+  .hero{background:#fff;color:#000;padding:0 0 24px}
+  .hero h1,.hero h1 em{color:#000}
+  .hero-c>p,.badge,.hero-tags span{color:#333}
+  .ch,.lec{break-inside:avoid}
+  .card{border:1px solid #ddd}
+}
+</style>
+
+<style>
+.lec{border:1px solid var(--border);border-radius:var(--rlg);margin:22px 0;overflow:hidden;
+  scroll-margin-top:20px}
+.lec-h{display:flex;align-items:baseline;gap:12px;padding:15px 20px;background:var(--panel);
+  border-bottom:1px solid var(--border);flex-wrap:wrap}
+.lec-n{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+  color:var(--muted);flex-shrink:0}
+.lec-t{font-weight:700;font-size:16.5px;color:var(--ink);flex:1 1 180px;min-width:0}
+.lec-d{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);flex-shrink:0}
+.lec-b{padding:22px 20px}
+.lec-b>p{font-size:15px}
+.say{border-left:3px solid var(--accent);padding:2px 0 2px 16px;margin:0 0 20px}
+.say .sl{font-size:10.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--muted);
+  font-weight:700;margin-bottom:5px}
+.say p{color:var(--ink);font-size:15.5px;margin:0;font-style:italic;line-height:1.6}
+.ecr{display:grid;grid-template-columns:auto 1fr;gap:9px 18px;margin:18px 0;align-items:baseline;
+  padding:16px 18px;background:var(--panel);border-radius:var(--radius)}
+.ecr dt{font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);
+  font-weight:700;white-space:nowrap}
+.ecr dd{margin:0;font-size:14.5px;color:var(--soft)}
+.ecr dd b{color:var(--ink)}
+@media (max-width:560px){.ecr{grid-template-columns:1fr;gap:2px}.ecr dd{margin-bottom:10px}}
+.clics{counter-reset:k;list-style:none;padding:0;margin:10px 0 4px}
+.clics li{counter-increment:k;position:relative;padding:8px 0 8px 34px;
+  border-bottom:1px solid var(--border);font-size:14.5px;color:var(--soft);line-height:1.6}
+.clics li:last-child{border-bottom:none}
+.clics li::before{content:counter(k);position:absolute;left:0;top:8px;
+  color:var(--muted);font-size:11.5px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.clics li b{color:var(--ink)}
+.hc2{font-size:13.5px;color:var(--muted);border-top:1px solid var(--border);
+  padding-top:12px;margin-top:16px}
+.hc2 b{color:var(--soft)}
+</style>
+
+<style>.ch{margin-bottom:0}#prepa{scroll-margin-top:20px}</style>
+
+<button class="toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<nav class="sidebar">
+  <div class="logo">⚙️ Make</div>
+  <div class="sub">Livret de tournage · Studeria</div>
+  <div class="nav-section">🎬 Avant de tourner</div>
+  <a href="#prepa"><span class="n">•</span>Le plateau et les données</a>
+  <div class="div"></div>
+  <div class="nav-section">📖 Les leçons</div>
+  <a href="#L01"><span class="n">01</span>À quoi sert une automatisation</a>
+  <a href="#L02"><span class="n">02</span>Un scénario, vu de haut</a>
+  <a href="#L03"><span class="n">03</span>Ce que ça coûte vraiment</a>
+  <a href="#L04"><span class="n">04</span>Le point de départ</a>
+  <a href="#L05"><span class="n">05</span>Choisir quand se réveiller</a>
+  <a href="#L06"><span class="n">06</span>Calculer, pas deviner</a>
+  <a href="#L07"><span class="n">07</span>Ne facturer que ce qui doit l’être</a>
+  <a href="#L08"><span class="n">08</span>Repérer les retards</a>
+  <a href="#L09"><span class="n">09</span>Rédiger le ton, pas la décision</a>
+  <a href="#L10"><span class="n">10</span>Traiter selon le retard, et se souvenir</a>
+  <a href="#L11"><span class="n">11</span>Quand ça casse, et la checklist</a>
+</nav>
+
+<div class="main">
+<div class="hero"><div class="hero-c">
+  <span class="badge">🎬 Focus outils · Outil 2</span>
+  <h1>Tourner le chapitre <em>Make</em></h1>
+  <p>11 leçons, 1 h 30. On branche la base du chapitre Airtable sur la facturation du cabinet : facturer chaque mois, relancer chaque matin.</p>
+  <div class="hero-tags"><span><span class="ic">📋</span>11 leçons · 1 h 30</span><span><span class="ic">🔑</span>Compte gratuit neuf</span><span><span class="ic">⏱️</span>1 h 45 de préparation</span><span><span class="ic">🧾</span>1 table et 2 champs à ajouter</span></div>
+</div></div>
+
+<div class="content">
+<div class="ch" id="prepa">
+  <div class="card">
+<p><strong>11 leçons, 1 h 30.</strong> Le cas pratique : l’apprenant est indépendant. Une fois la mission livrée, il faut la facturer, puis relancer ceux qui tardent à payer, et c’est ce qu’on oublie de faire un mois sur deux. On automatise ces deux choses avec <b>deux scénarios</b> : <b>facturer le 1er du mois, relancer chaque matin</b>. Les montants et les dates sont calculés, jamais devinés. L’IA ne rédige que le ton des relances, en brouillon.</p>
+<div class="tip info"><span class="tip-i">🔗</span><div class="tip-c"><strong>On repart de la base du chapitre 1, et on lui ajoute une table</strong>
+La base Cabinet, telle qu’elle est : Contacts, Affaires, Prestations, déjà remplies. On y ajoute la table <b>Factures</b> et deux champs dans Affaires, comme la table Demandes a été ajoutée à la leçon 11 du chapitre Airtable : une base vit. La table Demandes ne sert plus ici, on n’y touche pas.</div></div>
+<div class="tip warn"><span class="tip-i">⚖️</span><div class="tip-c"><strong>Note de production : pourquoi ce cas, et pas des mails à trier</strong>
+Trier ou rédiger des mails se règle avec une tâche programmée dans un assistant IA, et la série des agents IA le montre. Facturer et relancer, c’est de l’argent et des dates : il faut qu’une <b>règle</b> s’exécute à l’identique, qu’une facture ne soit <b>jamais émise ni relancée deux fois</b>, et que chaque passage laisse une <b>trace</b>. Une tâche programmée pourrait rédiger les relances. Elle ne garantit pas le calendrier. La leçon 1 pose cette frontière en une minute, sans dénigrer l’un des deux outils.</div></div>
+<div class="tip info"><span class="tip-i">🔗</span><div class="tip-c"><strong>La base de référence : un lien, rien à reconstruire</strong>
+La base Cabinet finie, avec la table Factures, les champs, les formules et les vues, telle qu’elle doit être le jour du tournage. Elle sert à vérifier avant chaque prise, et à rattraper si une leçon se plante.<br><a id="baseLink" href="#" onclick="return false" style="display:inline-block;margin-top:8px;padding:8px 14px;border:1px dashed var(--border-strong);border-radius:8px;color:var(--muted);text-decoration:none">🔗 Lien de la base de référence : à ajouter</a></div></div>
+<h3>À avoir sur le plateau avant de commencer</h3>
+<div class="prereq"><div class="pl">🔑 Comptes, onglets, fichiers</div>
+<ul>
+  <li>Un compte Make gratuit <strong>neuf</strong> : le compteur de crédits doit être intact à l’image. Le plan gratuit permet deux scénarios actifs, ce sont exactement ceux du chapitre</li>
+  <li>Une <strong>boîte Gmail de test</strong> dédiée, jamais utilisée ailleurs. Elle ne reçoit que des brouillons. Elle resservira au chapitre n8n</li>
+  <li>La <strong>base Airtable du chapitre 1</strong>, avec les ajouts décrits plus bas, faits <strong>hors caméra</strong></li>
+  <li>Le <strong>pack de données</strong> téléchargé et <strong>importé dans Airtable la veille</strong>, les 8 factures comprises : les retards se calculent contre le jour même, donc à importer au plus 5 jours avant le tournage</li>
+  <li>Le <strong>jeton d’accès Airtable</strong>, créé avant (la marche à suivre est plus bas) et rangé dans un gestionnaire de mots de passe. <strong>Pas de clé d’IA</strong> : sur le plan gratuit, Make fournit le modèle</li>
+  <li>Le <strong>compte Google de la boîte de test</strong>, déjà ouvert dans le navigateur : la leçon 9 affiche l’écran d’autorisation de Gmail</li>
+  <li>Les <strong>deux scénarios finis</strong> et le <strong>scénario cassé</strong>, construits en répétition, avec le <strong>coût réel en crédits</strong> d’un passage relevé à ce moment-là</li>
+  <li>Onglet : make.com/en/pricing</li>
+</ul></div>
+<h3>Les fichiers à télécharger</h3>
+<p>Rien à copier à la main : chaque table de pratique est un <b>fichier</b>, prêt à importer dans Airtable. Le pack réunit tout. Chaque leçon cite aussi ses propres fichiers, avec leur bouton tout en bas de la fiche.</p>
+<button class="dlb" onclick="dlZip()"><span class="dlb-i">⬇</span><span class="dlb-t"><b>Le pack des données de pratique</b><span>Contacts, Affaires, Prestations, Factures en CSV, plus un lisez-moi · MAKE-pack-donnees.zip</span></span></button>
+<button class="dlb" data-nom="MAKE-donnees-de-pratique.xlsx" onclick="tele(this)"><span class="dlb-i">⬇</span><span class="dlb-t"><b>La version Excel</b><span>Pour lire ou modifier les données. Un onglet par table, plus les champs de Factures · MAKE-donnees-de-pratique.xlsx · 13 Ko</span></span><script type="text/plain">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</script></button>
+<h3>Le jeton Airtable, à créer avant</h3>
+<ol class="steps"><li>Ouvrir <b>airtable.com/create/tokens</b> et cliquer sur <b>Create new token</b>. Le nommer, par exemple « Make, chapitre 3 ».</li><li>Cocher les trois droits : <b>data.records:read</b>, <b>data.records:write</b> et <b>schema.bases:read</b>.</li><li>Dans <b>Access</b>, ajouter la base <b>Cabinet</b> seulement, pas tout l’espace de travail.</li><li>Cliquer sur <b>Create token</b>, puis copier la valeur dans le gestionnaire de mots de passe : Airtable ne l’affiche qu’une fois.</li><li>Le jour du tournage, en leçon 5 : type de connexion <b>« Airtable Token or Key »</b>, jeton de type Personal Access Token, collé depuis le gestionnaire.</li></ol>
+<div class="tip warn"><span class="tip-i">🧠</span><div class="tip-c"><strong>Pas de clé d’IA à créer</strong>
+Le module d’IA de la leçon 9 est <b>Make AI Toolkit</b>, avec le <b>fournisseur d’IA de Make</b> : aucune clé à fabriquer. Brancher sa propre clé OpenAI ou Claude n’est possible que sur un plan payant, ce qui n’est pas le cas du compte gratuit neuf. Les crédits dépendent alors du nombre de mots lus et écrits : relever le coût réel en répétition.</div></div>
+<h3>Dans Affaires : deux champs à ajouter hors caméra</h3>
+<div class="tw"><table><thead><tr><th>Champ</th><th>Type</th><th>Rôle</th></tr></thead><tbody><tr><td>Facturée</td><td>Case à cocher</td><td>Empêche de facturer deux fois la même affaire. Elle est cochée par le scénario</td></tr><tr><td>Société</td><td>Rappel (lookup) depuis Contacts</td><td>Le nom du client qu’on recopie sur la facture</td></tr></tbody></table></div>
+<div class="tip warn"><span class="tip-i">🔎</span><div class="tip-c"><strong>À vérifier : le champ Total</strong>
+Le rollup de la leçon 8 du chapitre Airtable, qui additionne les prestations, doit exister dans Affaires et s’appeler <b>Total</b>. S’il porte un autre nom dans la base de référence, le renommer avant de tourner.</div></div>
+<h3>La table Factures, à créer hors caméra</h3>
+<p>Une facture est une <b>photographie</b> : on recopie le client, l’email et le montant au moment de l’émission, pour qu’une modification ultérieure de l’affaire ne change pas une facture déjà émise. Deux statuts seulement, Émise et Payée, décidés une fois : une sélection, pas un texte libre.</p>
+<div class="tw"><table><thead><tr><th>Champ</th><th>Type</th><th>Qui l’écrit</th></tr></thead><tbody><tr><td>N°</td><td>Numéro automatique</td><td>La base</td></tr><tr><td>Référence</td><td>Formule</td><td>La base</td></tr><tr><td>Client</td><td>Texte</td><td>Make, leçon 6</td></tr><tr><td>Email client</td><td>Texte</td><td>Make, leçon 6</td></tr><tr><td>Objet</td><td>Texte</td><td>Make, leçon 6</td></tr><tr><td>Montant HT</td><td>Nombre, 2 décimales, en euros</td><td>Make, leçon 6</td></tr><tr><td>TVA</td><td>Formule : 20 %</td><td>La base</td></tr><tr><td>Montant TTC</td><td>Formule</td><td>La base</td></tr><tr><td>Émise le</td><td>Date</td><td>Make, leçon 6</td></tr><tr><td>Échéance de paiement</td><td>Date</td><td>Make, leçon 6</td></tr><tr><td>Statut</td><td>Sélection : Émise / Payée</td><td>Make, leçon 6, puis la personne</td></tr><tr><td>Niveau de relance</td><td>Nombre, 0 par défaut</td><td>Make, leçons 6 et 10</td></tr><tr><td>Dernière relance</td><td>Date</td><td>Make, leçon 10</td></tr><tr><td>À escalader</td><td>Case à cocher</td><td>Make, leçon 10</td></tr><tr><td>Jours de retard</td><td>Formule</td><td>La base</td></tr><tr><td>Relance due</td><td>Formule</td><td>La base</td></tr></tbody></table></div>
+<div class="cbx">
+  <div class="cbx-h"><span class="cbx-l">Les cinq formules — à coller dans chaque champ calculé</span>
+    <button class="cbx-b" onclick="cp(this,'d1')">Copier</button></div>
+  <pre id="d1" class="cbx-p">Référence
+&quot;F-2026-&quot; &amp; REPT(&quot;0&quot;, 3 - LEN({N°} &amp; &quot;&quot;)) &amp; {N°}
+
+TVA
+ROUND({Montant HT} * 0.2, 2)
+
+Montant TTC
+{Montant HT} + {TVA}
+
+Jours de retard
+IF(AND({Statut} != &quot;Payée&quot;, IS_BEFORE({Échéance de paiement}, TODAY())), DATETIME_DIFF(TODAY(), {Échéance de paiement}, &quot;days&quot;), 0)
+
+Relance due
+IF({Statut} = &quot;Payée&quot;, 0,
+  IF(AND({Jours de retard} &gt;= 30, {Niveau de relance} = 2), 3,
+    IF(AND({Jours de retard} &gt;= 15, {Niveau de relance} = 1), 2,
+      IF(AND({Jours de retard} &gt;= 7, {Niveau de relance} = 0), 1, 0))))</pre>
+</div>
+<div class="tip warn"><span class="tip-i">🧮</span><div class="tip-c"><strong>C’est la base qui calcule, pas Make, et surtout pas l’IA</strong>
+La TVA, le TTC, le retard et la relance due ne sont jamais écrits par le scénario : il les lit. La règle des 7, 15 et 30 jours est écrite <b>une fois</b>, lisible par tous. Si l’apprenant est en franchise de TVA, la formule de TVA vaut 0 : c’est la base qui décide.</div></div>
+<h3>Importer dans Airtable, dans cet ordre</h3>
+<p>Chaque import a besoin que le précédent existe : les affaires se relient aux contacts <b>par leur nom</b>, les prestations aux affaires de la même façon.</p>
+<ol class="steps"><li><b>Contacts.</b> Dans la table Contacts : menu de la table › <b>Import data › CSV file</b>, choisir contacts.csv, laisser les colonnes se faire correspondre par leur nom.</li><li><b>Affaires.</b> Même geste avec affaires.csv. Puis <b>cocher à la main la case Facturée</b> sur « Premier diagnostic » : c’est l’affaire déjà facturée le mois dernier.</li><li><b>Prestations.</b> Même geste avec prestations.csv.</li><li><b>Factures.</b> Nouvelle table : <b>+ Add or import › CSV file</b> avec factures-pratique.csv, détaillé plus bas.</li></ol>
+<div class="tw"><table><thead><tr><th>Affaire</th><th>Total attendu</th><th>Facturée</th><th>Ce qui doit se passer</th></tr></thead><tbody><tr><td>Mise en avant des nouveautés (déjà dans la base)</td><td>2 300 €</td><td>non</td><td>Facturée en leçon 6</td></tr><tr><td>Diagnostic des devis</td><td>2 700 €</td><td>non</td><td>Facturée en leçon 6</td></tr><tr><td>Mise en place du suivi de commandes</td><td>4 500 €</td><td>non</td><td>Facturée en leçon 6</td></tr><tr><td>Cadrage préliminaire (offert)</td><td>vide</td><td>non</td><td>Arrêtée par le filtre, leçon 7</td></tr><tr><td>Premier diagnostic</td><td>1 480 €</td><td><b>oui</b></td><td>Jamais ramenée par la recherche, leçon 5</td></tr></tbody></table></div>
+<div class="tip warn"><span class="tip-i">🔎</span><div class="tip-c"><strong>À vérifier sur la base de référence avant la prise</strong>
+Les totaux doivent tomber sur 2 300, 2 700, 4 500 et 1 480 €, et rester vides pour « Cadrage préliminaire (offert) ». Sinon, une prestation n’est pas reliée à son affaire. À corriger avant de filmer, pas pendant.</div></div>
+<h3>Les 8 factures de pratique</h3>
+<p>Les factures sont numérotées par la base dans l’ordre de l’import : <b>F-2026-001 à F-2026-008</b>. Les dates se calculent à partir du jour du téléchargement : à importer au plus 5 jours avant le tournage, sinon une ligne bascule.</p>
+<pre id="dFactures" hidden></pre>
+<div class="tip info"><span class="tip-i">⚡</span><div class="tip-c"><strong>Le plus rapide pour créer la table : l’import</strong>
+Dans Airtable : <b>+ Add or import › CSV file</b>, importer le fichier, nommer la table <b>Factures</b>. Puis, dans l’ordre : passer <b>Statut</b> en sélection (Émise, Payée), <b>Niveau de relance</b> et <b>Montant HT</b> en nombre, les trois colonnes de dates en date ; ajouter le champ <b>N°</b> (numéro automatique), la case <b>À escalader</b>, puis les cinq formules du bloc plus haut. Compter dix minutes, une seule fois.</div></div>
+<div class="tw"><table><thead><tr><th>N°</th><th>Client</th><th>Objet</th><th>Montant HT</th><th>Échéance de paiement</th><th>Niveau</th><th>Résultat attendu en leçons 8 à 10</th></tr></thead><tbody><tr><td>001</td><td>Mercier Optique</td><td>Premier diagnostic</td><td>1 480 €</td><td>aujourd’hui + 5 j</td><td>0</td><td>Rien : pas encore échue</td></tr><tr><td>002</td><td>Pressing Cherif</td><td>Diagnostic</td><td>1 200 €</td><td>aujourd’hui − 1 j</td><td>0</td><td>Rien : 1 jour de retard, sous le seuil</td></tr><tr><td>003</td><td>Perrot Menuiserie</td><td>Formation de l’équipe</td><td>2 400 €</td><td>aujourd’hui − 9 j</td><td>0</td><td><b>Relance 1</b>, courtoise</td></tr><tr><td>004</td><td>Dubreuil Paysage</td><td>Audit</td><td>3 500 €</td><td>aujourd’hui − 7 j</td><td>0</td><td><b>Relance 1</b>, pile au seuil de 7 jours</td></tr><tr><td>005</td><td>Gauthier &amp; Filles</td><td>Refonte de process</td><td>5 200 €</td><td>aujourd’hui − 18 j</td><td>1</td><td><b>Relance 2</b>, ferme</td></tr><tr><td>006</td><td>Librairie Le Passage</td><td>Audit</td><td>850 €</td><td>aujourd’hui − 20 j</td><td>1</td><td>Rien : déjà payée</td></tr><tr><td>007</td><td>Clinique des Tilleuls</td><td>Diagnostic initial</td><td>7 900 €</td><td>aujourd’hui − 34 j</td><td>2</td><td><b>Relance 3</b>, escalade</td></tr><tr><td>008</td><td>Menuiserie Vasseur</td><td>Audit initial</td><td>4 200 €</td><td>aujourd’hui − 45 j</td><td>3</td><td>Rien : déjà au niveau maximum</td></tr></tbody></table></div>
+<div class="tip warn"><span class="tip-i">🔎</span><div class="tip-c"><strong>À vérifier le matin du tournage</strong>
+La colonne Relance due affiche <b>1, 1, 2 et 3</b> sur les lignes 003, 004, 005 et 007, et <b>0</b> partout ailleurs. Sinon, le fichier a été importé trop tôt avant le tournage : vider la table Factures et réimporter le fichier téléchargé.</div></div>
+<div class="tip warn"><span class="tip-i">📧</span><div class="tip-c"><strong>Les adresses sont fictives</strong>
+Elles se terminent en « .example », sauf trois adresses déjà présentes dans la base du chapitre 1. Comme les mails ne sont que des brouillons, rien ne part, mais autant ne pas garnir Gmail de vraies adresses.</div></div>
+
+<h3>Partie 1 — Les bases</h3>
+
+<div class="lec" id="L01">
+  <div class="lec-h"><span class="lec-n">01</span><span class="lec-t">À quoi sert une automatisation</span><span class="lec-d">7 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d’ouverture</div><p>« Il y a des choses que vous faites chaque mois, toujours pareil. Ce sont celles-là qu’on va confier à une machine. »</p></div>
+    <dl class="ecr"><dt>À l’écran</dt><dd>Rien. Vidéo parlée, face caméra, ou un simple schéma.</dd><dt>Données</dt><dd>Aucune.</dd><dt>À annoncer</dt><dd>Le cas du chapitre : <b>facturer chaque mois, relancer chaque matin</b>, dans le cabinet de l’apprenant.</dd></dl>
+    <h4>Les gestes, dans l’ordre</h4>
+    <ol class="clics"><li>Poser les <b>quatre questions</b> qui disent si une tâche est automatisable : est-ce qu’elle revient ? est-ce qu’elle suit toujours les mêmes règles ? est-ce que l’erreur se voit ? est-ce qu’elle traverse <b>plusieurs outils</b> et doit <b>laisser une trace</b> ?</li><li>Donner deux exemples qui passent le test, facturer en fin de mois et relancer une facture impayée, et un qui ne le passe pas : décider du prix d’une mission, ou de passer en recouvrement.</li><li><b>Poser la frontière avec une tâche programmée</b> dans un assistant IA, avec les deux cartes ci-dessous. Une phrase pour chacune, sans dénigrer l’autre.</li><li>Annoncer le cas pratique du chapitre.</li></ol>
+    <div class="vg">
+  <div class="vc"><div class="vt">Une tâche programmée dans un assistant IA</div><div class="vd">Un assistant qui lit, résume, rédige, à heure fixe. Le jugement est dans la tâche. Une personne relit. Aucune garantie que le même calendrier soit appliqué à l’identique d’un jour à l’autre.</div><div class="ve">Exemple : chaque lundi, résumer mes mails et proposer des réponses.</div></div>
+  <div class="vc"><div class="vt">Un scénario Make</div><div class="vd">Une chaîne qui applique la même règle à chaque facture, à chaque réveil. L’IA n’y est qu’une étape, la rédaction : c’est une règle qui décide qui, quand, combien. Chaque passage est tracé, chaque facture porte son état.</div><div class="ve">Exemple : facturer en fin de mois, relancer à 7, 15 et 30 jours.</div></div>
+</div>
+    <div class="analogy"><div class="al">🧺 La machine à laver</div><p>Personne ne lave son linge à la main en 2026. Pas parce que c’est compliqué, mais parce que c’est toujours le même geste. Une automatisation, c’est ça : on ne confie pas à la machine ce qui demande du jugement, on lui confie ce qui demande de la répétition.</p></div>
+    <div class="tip warn"><span class="tip-i">🤝</span><div class="tip-c"><strong>Ce n’est pas un duel</strong>
+Une tâche programmée peut très bien rédiger une relance. Ce qu’on ne lui confie pas : décider qui relancer, quand, de combien, et ne jamais relancer deux fois. Quand de l’argent et des dates sont en jeu, on veut une règle qui s’exécute à l’identique. L’apprenant utilisera les deux outils : le dire.</div></div>
+    <p class="hc2"><b>Hors champ :</b> Make, qui ne s’ouvre pas encore. Et la comparaison point par point avec les autres outils d’automatisation : elle n’est pas le sujet ici.</p>
+  </div>
+</div>
+<div class="lec" id="L02">
+  <div class="lec-h"><span class="lec-n">02</span><span class="lec-t">Un scénario, vu de haut</span><span class="lec-d">7 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d’ouverture</div><p>« Un déclencheur, des modules, des connexions. Trois mots, et on a le vocabulaire. »</p></div>
+    <dl class="ecr"><dt>À l’écran</dt><dd>Les deux scénarios finis, construits en répétition, ouverts l’un après l’autre.</dd><dt>Données</dt><dd>Aucune. On ne lance rien, on regarde.</dd><dt>Pourquoi montrer la fin d’abord</dt><dd>L’apprenant sait où il va. Sans ça, les neuf leçons suivantes ressemblent à des clics sans but.</dd></dl>
+    <h4>Les gestes, dans l’ordre</h4>
+    <ol class="clics"><li>Ouvrir le premier scénario fini, <b>Facturer</b>. Nommer les trois éléments en les pointant : le <b>déclencheur</b> (le premier module et son horloge), les <b>modules</b> (les bulles suivantes), les <b>connexions</b> (les traits).</li><li>Suivre le chemin d’une affaire terminée jusqu’à sa facture, avec le curseur, grâce au premier schéma ci-dessous.</li><li>Ouvrir le second, <b>Relancer</b>, et suivre le chemin d’une facture en retard jusqu’au brouillon, avec le second schéma.</li><li>Dire ce qui va être construit, et dans quel ordre : facturer d’abord (leçons 5 à 7), relancer ensuite (8 à 10), casser en 11.</li></ol>
+    <h4>Scénario 1 — Facturer, le 1er de chaque mois</h4><div class="flow"><div class="flow-node"><div class="fl">🕘</div><div class="fn2">Horloge</div><div class="fd">le 1er du mois</div></div><div class="flow-arrow">→</div><div class="flow-node"><div class="fl">📂</div><div class="fn2">Affaires terminées</div><div class="fd">pas encore facturées</div></div><div class="flow-arrow">→</div><div class="flow-node"><div class="fl">🚦</div><div class="fn2">Filtre</div><div class="fd">total supérieur à 0</div></div><div class="flow-arrow">→</div><div class="flow-node"><div class="fl">🧾</div><div class="fn2">Facture créée</div><div class="fd">montants et dates calculés</div></div><div class="flow-arrow">→</div><div class="flow-node"><div class="fl">✅</div><div class="fn2">Affaire marquée</div><div class="fd">Facturée</div></div></div><h4>Scénario 2 — Relancer, chaque matin</h4><div class="flow"><div class="flow-node"><div class="fl">🕗</div><div class="fn2">Horloge</div><div class="fd">chaque matin</div></div><div class="flow-arrow">→</div><div class="flow-node"><div class="fl">🔎</div><div class="fn2">Factures à relancer</div><div class="fd">la base le calcule</div></div><div class="flow-arrow">→</div><div class="flow-node"><div class="fl">🧠</div><div class="fn2">IA</div><div class="fd">rédige le ton</div></div><div class="flow-arrow">→</div><div class="flow-node"><div class="fl">✉️</div><div class="fn2">Brouillon Gmail</div><div class="fd">jamais envoyé</div></div><div class="flow-arrow">→</div><div class="flow-node"><div class="fl">🔀</div><div class="fn2">Routeur</div><div class="fd">relance 1-2 ou 3</div></div><div class="flow-arrow">→</div><div class="flow-node"><div class="fl">🧷</div><div class="fn2">Niveau mis à jour</div><div class="fd">pour ne pas relancer deux fois</div></div></div>
+    <p class="hc2"><b>Hors champ :</b> La construction. On ne clique sur rien. Cette leçon est une visite guidée, pas un atelier.</p>
+  </div>
+</div>
+<div class="lec" id="L03">
+  <div class="lec-h"><span class="lec-n">03</span><span class="lec-t">Ce que ça coûte vraiment</span><span class="lec-d">7 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d’ouverture</div><p>« Make se paie en crédits. Ici, le gratuit suffit, à une condition : bien choisir l’horloge. »</p></div>
+    <dl class="ecr"><dt>À l’écran</dt><dd>make.com/en/pricing, puis le compteur du compte neuf.</dd><dt>Données</dt><dd>Aucune. <b>Lire les chiffres à l’écran</b>, dire la date du jour.</dd><dt>Les deux calculs à poser</dt><dd><b>96 réveils par jour</b> pour un scénario réglé toutes les 15 minutes, soit <b>2 880 crédits par mois</b> rien que pour la recherche, même quand il n’y a rien à faire. Une fois par jour : <b>30</b>. Puis : Facturer = 1 recherche + 2 modules par facture ; Relancer = 1 recherche par jour + 3 modules par relance. Pour une dizaine de factures par mois : <b>moins de 100 crédits</b>.</dd></dl>
+    <h4>Les gestes, dans l’ordre</h4>
+    <ol class="clics"><li>Ouvrir la page de tarifs, dire la date.</li><li>Lire à l’écran le nombre de crédits du plan gratuit, le nombre de scénarios actifs, l’intervalle minimum entre deux exécutions et la taille maximale des fichiers.</li><li>Expliquer ce qu’est un <b>crédit</b> : en gros, chaque action de module qui s’exécute, pas chaque scénario. Les modules d’IA en coûtent davantage, selon le nombre de mots lus et écrits : le coût réel se lit dans le scénario, après une exécution.</li><li><b>Poser le calcul des 96 réveils à l’écran</b>, à la main : 96 × 30 = 2 880 crédits par mois pour guetter, contre 30 avec une horloge par jour. Ce chiffre est repris en leçons 5 et 11.</li><li>Poser le second calcul, scénario par scénario, avec les modules par facture.</li><li>Conclure à voix haute : le gratuit tient pour un indépendant, et deux scénarios actifs, c’est exactement ce qu’on construit. Il se viderait pourtant en une semaine avec une horloge mal réglée.</li><li>Montrer le compteur du compte, intact.</li></ol>
+    <div class="tip warn"><span class="tip-i">🔢</span><div class="tip-c"><strong>Les chiffres à garder</strong>
+Les 96 réveils expliquent pourquoi la leçon 5 choisit une horloge mensuelle et la leçon 8 une horloge quotidienne. Le « moins de 100 crédits » est une estimation : la remplacer par le coût réel relevé en répétition sur les deux scénarios finis.</div></div>
+    <div class="tip err"><span class="tip-i">🗣️</span><div class="tip-c"><strong>Le mot a changé</strong>
+Make comptait en « opérations » et compte en <b>crédits</b> depuis la fin août 2025. Dire « crédits ». Les tutoriels plus anciens que l’apprenant croisera disent encore « opérations ».</div></div>
+    <div class="tip warn"><span class="tip-i">📅</span><div class="tip-c"><strong>Ces chiffres bougent</strong>
+Ne jamais les annoncer de mémoire. Rouvrir la page le matin du tournage et annoncer la date : une vidéo datée reste utilisable même quand une grille change.</div></div>
+    <p class="hc2"><b>Hors champ :</b> Les offres entreprise et les add-ons. On reste sur ce que l’apprenant aura devant lui.</p>
+  </div>
+</div>
+<h3>Partie 2 — Le cas pratique : facturer et relancer</h3>
+
+<div class="lec" id="L04">
+  <div class="lec-h"><span class="lec-n">04</span><span class="lec-t">Le point de départ</span><span class="lec-d">8 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d’ouverture</div><p>« Une facture, quelques minutes. Les relances, c’est surtout ne pas oublier. Faisons le calcul ensemble. »</p></div>
+    <dl class="ecr"><dt>À l’écran</dt><dd>La base Cabinet : l’affaire, puis la table Factures. <b>Make n’apparaît pas.</b></dd><dt>Données</dt><dd>L’affaire <b>Mise en avant des nouveautés</b> (total 2 300 €), et les factures de pratique : <b>factures-pratique.csv</b>.</dd><dt>À avoir sous la main</dt><dd>Un <b>chronomètre</b>, visible ou non, mais qui tourne vraiment. Une calculette.</dd><dt>Le contexte</dt><dd>Une indépendante : une dizaine de factures par mois, et des clients qui paient en retard.</dd></dl>
+    <h4>Les gestes, dans l’ordre</h4>
+    <ol class="clics"><li>Ouvrir l’affaire <b>Mise en avant des nouveautés</b> et lire son total.</li><li>Faire la <b>facture à la main</b> dans la table Factures : recopier le client et l’email, calculer la TVA et le TTC à la calculette, calculer l’échéance à 30 jours, saisir les dates. Cocher Facturée sur l’affaire. <b>Montre en main.</b></li><li>Annoncer le temps obtenu. <b>Ne pas l’arrondir.</b> Multiplier par dix, à l’écran.</li><li>Ouvrir la table Factures de pratique et chercher à l’œil quelles factures sont en retard, et de combien de jours. <b>Second chrono.</b></li><li>Dire ce qu’on va supprimer dans les sept leçons suivantes, et ce qu’on ne supprimera pas : la décision d’envoyer, et celle de passer à l’étape suivante du recouvrement.</li></ol>
+    <div class="tip err"><span class="tip-i">⏱️</span><div class="tip-c"><strong>Chronométrer pour de vrai</strong>
+Les deux chiffres sont repris tels quels en leçon 11. Exemple de calcul : 7 min 30 × 10 factures = 1 h 15 par mois ; une revue des retards de 12 minutes par semaine, c’est environ 50 minutes par mois. S’ils sont inventés, la fin du chapitre sonne faux, et l’apprenant, lui, fera le calcul chez lui.</div></div>
+    <div class="tip warn"><span class="tip-i">↩️</span><div class="tip-c"><strong>À défaire à la fin de la leçon</strong>
+Supprimer la facture saisie à la main et décocher Facturée sur l’affaire. Sinon la leçon 6 ne retrouve plus « Mise en avant des nouveautés ».</div></div>
+    <p class="hc2"><b>Hors champ :</b> Make. Cette leçon se tourne dans la base. L’outil n’apparaît pas : c’est ce qui rend la suite désirable.</p>
+    <h4>Les fichiers de cette leçon</h4>
+    <button class="dlb" onclick="dlCsv()"><span class="dlb-i">⬇</span><span class="dlb-t"><b>Les 8 factures de pratique</b><span>Dates calculées à partir d’aujourd’hui · factures-pratique.csv</span></span></button>
+  </div>
+</div>
+<div class="lec" id="L05">
+  <div class="lec-h"><span class="lec-n">05</span><span class="lec-t">Choisir quand se réveiller</span><span class="lec-d">8 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d’ouverture</div><p>« Un scénario programmé ne se réveille pas parce qu’il se passe quelque chose. Il se réveille parce que l’horloge sonne. »</p></div>
+    <dl class="ecr"><dt>À l’écran</dt><dd>Make, scénario vide. Airtable sur un second écran.</dd><dt>Où Make lit</dt><dd>La table <b>Affaires</b> : statut Terminée, et case Facturée non cochée.</dd><dt>Données</dt><dd>Les affaires de pratique : <b>contacts.csv</b>, <b>affaires.csv</b> et <b>prestations.csv</b>. Quatre sortiront : Mise en avant des nouveautés, Diagnostic des devis, Mise en place du suivi de commandes, Cadrage préliminaire (offert).</dd><dt>Hors caméra</dt><dd>Le jeton d’accès Airtable est déjà créé et t’attend dans le gestionnaire de mots de passe. Rien à générer : tu le copies, tu le colles.</dd><dt>La nuance à dire</dt><dd>Ici, rien n’arrive : ni mail, ni formulaire. <b>L’horloge est le déclencheur</b>, et c’est le bon choix pour une facturation mensuelle. Les déclencheurs instantanés, les webhooks, existent : on les cite sans les construire.</dd></dl>
+    <h4>Les gestes, dans l’ordre</h4>
+    <ol class="clics"><li>Créer le scénario, le nommer <b>Facturer</b>.</li><li>Poser <b>Airtable › Search records</b> sur la table Affaires. Connecter le compte : type de connexion <b>« Airtable Token or Key »</b>, jeton collé depuis le gestionnaire. Dire qu’on l’a préparé hors caméra, et pourquoi.</li><li>Coller la formule de recherche (bloc ci-dessous) : statut Terminée, et non facturée.</li><li>Ouvrir le réglage de planification, sur le premier module. <b>Montrer le réglage par défaut, un intervalle de 15 minutes, et dire ce qu’il coûterait</b> (leçon 3). Choisir « Jours du mois », le 1er, à 9 h.</li><li>Exécuter une fois, à la main.</li><li><b>Dérouler la sortie du module</b> et repérer à l’écran : le nom de l’affaire, le total, l’email client, la société, la case Facturée.</li><li>Énoncer le réflexe : <b>on lit la sortie d’un module avant d’écrire la suite.</b> C’est la règle propriétaire de cette leçon, elle sert dans tout le parcours.</li></ol>
+    <div class="cbx">
+  <div class="cbx-h"><span class="cbx-l">La formule de recherche</span>
+    <button class="cbx-b" onclick="cp(this,'d2')">Copier</button></div>
+  <pre id="d2" class="cbx-p">AND({Statut} = &quot;Terminée&quot;, NOT({Facturée}))</pre>
+</div>
+    <div class="tip err"><span class="tip-i">🔑</span><div class="tip-c"><strong>C’est le moment où l’on manipule une clé</strong>
+Elle ne doit jamais apparaître à l’écran. Le dire pendant qu’on colle : c’est la seule leçon où cette règle s’énonce en entier, ailleurs on la rappellera en trois mots.</div></div>
+    <div class="warning-big"><div class="wl">🚫 Ne pas laisser l’horloge à 15 minutes pour aller plus vite</div>
+<p>Pour la démo, on est tenté de garder le réglage par défaut. Le dire à voix haute : c’est exactement la mauvaise réponse pour une facturation mensuelle.</p></div>
+    <div class="tip warn"><span class="tip-i">🔎</span><div class="tip-c"><strong>À vérifier en répétition</strong>
+Où se situe le réglage de planification dans l’interface du jour, et que le plan gratuit propose bien « Jours du mois ». Make applique le fuseau horaire de l’organisation. Un champ de rappel, comme Société, sort en <b>liste</b> : le noter pour la leçon 6.</div></div>
+    <p class="hc2"><b>Hors champ :</b> Les webhooks, cités sans être construits. La planification avancée (plages horaires, jours de la semaine).</p>
+    <h4>Les fichiers de cette leçon</h4>
+    <button class="dlb" data-nom="contacts.csv" onclick="tele(this)"><span class="dlb-i">⬇</span><span class="dlb-t"><b>Les contacts</b><span>À importer en premier, dans la table Contacts · contacts.csv · 1 Ko</span></span><script type="text/plain">77u/Tm9tLFNvY2nDqXTDqSxFbWFpbCxUw6lsw6lwaG9uZSxWaWxsZQ0KU29maWFuZSBSaW5hbGRpLFJpbmFsZGkgVHJhaXRldXIscy5yaW5hbGRpQHJpbmFsZGktdHJhaXRldXIuZXhhbXBsZSwwNiAyMSAzMyA3NCAxOCxMaWxsZQ0KTGXDr2xhIEFtcmFuaSxBbXJhbmkgVGV4dGlsZSxjb250YWN0QGFtcmFuaS10ZXh0aWxlLmV4YW1wbGUsMDYgNDQgOTAgMTIgODUsVG91cmNvaW5nDQpGYW5ueSBOb2d1w6hzLE5vZ3XDqHMgRmxldXJzLGNvbnRhY3RAZmxldXJzLW5vZ3Vlcy5leGFtcGxlLDA2IDUyIDA4IDM3IDYxLFRvdWxvdXNlDQpTYW5kcmEgTWVyY2llcixNZXJjaWVyIE9wdGlxdWUsY29tcHRhQG1lcmNpZXItb3B0aXF1ZS5leGFtcGxlLDA2IDE4IDc2IDQyIDA5LEJvcmRlYXV4DQo=</script></button><button class="dlb" data-nom="affaires.csv" onclick="tele(this)"><span class="dlb-i">⬇</span><span class="dlb-t"><b>Les affaires de pratique</b><span>À importer dans la table Affaires · affaires.csv · 1 Ko</span></span><script type="text/plain">77u/QWZmYWlyZSxDb250YWN0LFN0YXR1dCzDiWNow6lhbmNlLEVtYWlsIGNsaWVudCxNYXJnZSAo4oKsKSxOb3RlIGludGVybmUNCkRpYWdub3N0aWMgZGVzIGRldmlzLFNvZmlhbmUgUmluYWxkaSxUZXJtaW7DqWUsMjAyNi0xMC0wNixzLnJpbmFsZGlAcmluYWxkaS10cmFpdGV1ci5leGFtcGxlLDExMDAsIkxpdnLDqSwgw6AgZmFjdHVyZXIiDQpNaXNlIGVuIHBsYWNlIGR1IHN1aXZpIGRlIGNvbW1hbmRlcyxMZcOvbGEgQW1yYW5pLFRlcm1pbsOpZSwyMDI2LTEwLTA5LGNvbnRhY3RAYW1yYW5pLXRleHRpbGUuZXhhbXBsZSwyMzAwLCJMaXZyw6ksIMOgIGZhY3R1cmVyIg0KQ2FkcmFnZSBwcsOpbGltaW5haXJlIChvZmZlcnQpLEZhbm55IE5vZ3XDqHMsVGVybWluw6llLDIwMjYtMDktMjUsY29udGFjdEBmbGV1cnMtbm9ndWVzLmV4YW1wbGUsMCwiT2ZmZXJ0LCBuZSBwYXMgZmFjdHVyZXIiDQpQcmVtaWVyIGRpYWdub3N0aWMsU2FuZHJhIE1lcmNpZXIsVGVybWluw6llLDIwMjYtMDktMTgsY29tcHRhQG1lcmNpZXItb3B0aXF1ZS5leGFtcGxlLDc0MCxGYWN0dXLDqSBsZSBtb2lzIGRlcm5pZXINCg==</script></button><button class="dlb" data-nom="prestations.csv" onclick="tele(this)"><span class="dlb-i">⬇</span><span class="dlb-t"><b>Les prestations</b><span>À importer après les affaires : ce sont elles qui font le total · prestations.csv · 1 Ko</span></span><script type="text/plain">77u/TGlnbmUsQWZmYWlyZSxRdWFudGl0w6ksUHJpeCB1bml0YWlyZSAo4oKsKQ0KRW50cmV0aWVucyBldCBhdWRpdCBkZXMgZGV2aXMsRGlhZ25vc3RpYyBkZXMgZGV2aXMsMSwxODAwDQpNb2TDqGxlIGRlIGRldmlzIHLDqXV0aWxpc2FibGUsRGlhZ25vc3RpYyBkZXMgZGV2aXMsMSw5MDANCkNvbnN0cnVjdGlvbiBkZSBsYSBiYXNlLE1pc2UgZW4gcGxhY2UgZHUgc3VpdmkgZGUgY29tbWFuZGVzLDEsMzIwMA0KRm9ybWF0aW9uIGRlIGwnw6lxdWlwZSxNaXNlIGVuIHBsYWNlIGR1IHN1aXZpIGRlIGNvbW1hbmRlcywyLDY1MA0KRGlhZ25vc3RpYyxQcmVtaWVyIGRpYWdub3N0aWMsMSwxNDgwDQo=</script></button>
+  </div>
+</div>
+<div class="lec" id="L06">
+  <div class="lec-h"><span class="lec-n">06</span><span class="lec-t">Calculer, pas deviner</span><span class="lec-d">9 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d’ouverture</div><p>« Un montant, une date, un numéro : on ne les écrit pas, on les calcule. Et surtout pas l’IA. »</p></div>
+    <dl class="ecr"><dt>À l’écran</dt><dd>Le scénario de la leçon 5. La table Factures sur un second écran.</dd><dt>Où Make écrit</dt><dd>Dans la table <b>Factures</b>, huit champs.</dd><dt>Ce que Make n’écrit pas</dt><dd><b>N°, Référence, TVA, Montant TTC, Jours de retard, Relance due</b> : la base les calcule.</dd><dt>Données</dt><dd>Les quatre affaires sorties à la leçon 5 : <b>affaires.csv</b>.</dd></dl>
+    <h4>Les gestes, dans l’ordre</h4>
+    <ol class="clics"><li>Ajouter <b>Airtable › Create a record</b>, table Factures.</li><li>Mapper les huit champs : Client ← Société ; Email client ← Email client ; Objet ← nom de l’affaire ; Montant HT ← Total ; Émise le ← la date du jour ; Échéance de paiement ← la date du jour plus 30 jours, avec la fonction <b>addDays</b> ; Statut ← Émise, valeur fixe ; Niveau de relance ← 0, valeur fixe.</li><li>Dire à voix haute les six champs qu’on ne touche pas, et pourquoi.</li><li>Ajouter <b>Airtable › Update a record</b> sur l’affaire : Facturée ← cochée. Dire que c’est ce qui empêche de facturer deux fois.</li><li>Exécuter. Basculer dans Airtable : <b>quatre factures</b>, numérotées par la base, TVA et TTC remplis tout seuls. Les lire à l’écran.</li><li>Prendre « Mise en avant des nouveautés » : HT 2 300, TVA 460, TTC 2 760, échéance à 30 jours.</li><li>Repérer la quatrième, « Cadrage préliminaire (offert) » : <b>une facture à 0 €</b>. Le dire, sans corriger : c’est la leçon suivante.</li></ol>
+    <div class="tip warn"><span class="tip-i">🔎</span><div class="tip-c"><strong>À vérifier sur la base de référence avant la prise</strong>
+Les trois vraies factures doivent tomber à 2 300, 2 700 et 4 500 € HT, soit 2 760, 3 240 et 5 400 € TTC. Sinon, une prestation n’est pas reliée à son affaire.</div></div>
+    <div class="tip warn"><span class="tip-i">🔎</span><div class="tip-c"><strong>À vérifier en répétition</strong>
+Le champ Société sort en liste : prendre son premier élément. Et le format de date renvoyé par la fonction est bien accepté par Airtable, sinon le mettre en AAAA-MM-JJ.</div></div>
+    <div class="tip err"><span class="tip-i">💶</span><div class="tip-c"><strong>Pas un module d’IA dans cette leçon</strong>
+Quand on sait écrire la règle, un montant, une TVA, trente jours, on l’écrit. L’IA arrive en leçon 9, là où il y a du texte à rédiger.</div></div>
+    <p class="hc2"><b>Hors champ :</b> Le PDF de la facture et son envoi : ils se branchent ici, avec un modèle de document, et se construisent comme le brouillon de la leçon 9.</p>
+    <h4>Les fichiers de cette leçon</h4>
+    <button class="dlb" data-nom="affaires.csv" onclick="tele(this)"><span class="dlb-i">⬇</span><span class="dlb-t"><b>Les affaires de pratique</b><span>À importer dans la table Affaires · affaires.csv · 1 Ko</span></span><script type="text/plain">77u/QWZmYWlyZSxDb250YWN0LFN0YXR1dCzDiWNow6lhbmNlLEVtYWlsIGNsaWVudCxNYXJnZSAo4oKsKSxOb3RlIGludGVybmUNCkRpYWdub3N0aWMgZGVzIGRldmlzLFNvZmlhbmUgUmluYWxkaSxUZXJtaW7DqWUsMjAyNi0xMC0wNixzLnJpbmFsZGlAcmluYWxkaS10cmFpdGV1ci5leGFtcGxlLDExMDAsIkxpdnLDqSwgw6AgZmFjdHVyZXIiDQpNaXNlIGVuIHBsYWNlIGR1IHN1aXZpIGRlIGNvbW1hbmRlcyxMZcOvbGEgQW1yYW5pLFRlcm1pbsOpZSwyMDI2LTEwLTA5LGNvbnRhY3RAYW1yYW5pLXRleHRpbGUuZXhhbXBsZSwyMzAwLCJMaXZyw6ksIMOgIGZhY3R1cmVyIg0KQ2FkcmFnZSBwcsOpbGltaW5haXJlIChvZmZlcnQpLEZhbm55IE5vZ3XDqHMsVGVybWluw6llLDIwMjYtMDktMjUsY29udGFjdEBmbGV1cnMtbm9ndWVzLmV4YW1wbGUsMCwiT2ZmZXJ0LCBuZSBwYXMgZmFjdHVyZXIiDQpQcmVtaWVyIGRpYWdub3N0aWMsU2FuZHJhIE1lcmNpZXIsVGVybWluw6llLDIwMjYtMDktMTgsY29tcHRhQG1lcmNpZXItb3B0aXF1ZS5leGFtcGxlLDc0MCxGYWN0dXLDqSBsZSBtb2lzIGRlcm5pZXINCg==</script></button>
+  </div>
+</div>
+<div class="lec" id="L07">
+  <div class="lec-h"><span class="lec-n">07</span><span class="lec-t">Ne facturer que ce qui doit l’être</span><span class="lec-d">7 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d’ouverture</div><p>« Une affaire offerte ne se facture pas. Et une facture ne s’émet pas deux fois. »</p></div>
+    <dl class="ecr"><dt>À l’écran</dt><dd>Le scénario de la leçon 6, puis la table Factures.</dd><dt>Données</dt><dd>Les quatre affaires de la leçon 6 : <b>affaires.csv</b>.</dd><dt>Le risque à nommer</dt><dd>Un filtre mal posé, et un client qui a reçu une prestation offerte reçoit une facture à 0 €.</dd><dt>Ce qu’on prouve</dt><dd>Deux choses : <b>le filtre arrête le cas absurde</b>, et <b>la case Facturée arrête le cas répété</b>.</dd></dl>
+    <h4>Les gestes, dans l’ordre</h4>
+    <ol class="clics"><li>Dans Airtable, supprimer la facture à 0 € et décocher Facturée sur « Cadrage préliminaire (offert) ». Les trois vraies factures restent.</li><li>Poser un filtre sur la connexion entre la recherche et la création : <b>le total est supérieur à 0</b>.</li><li>Relancer. La recherche ne ramène plus que l’affaire offerte : les trois autres sont cochées. Ouvrir l’historique : elle est arrivée, elle n’est pas passée. Aucune facture créée.</li><li><b>Relancer encore</b> : cette fois la recherche ne ramène rien du tout. Le scénario ne refait pas ce qu’il a déjà fait.</li><li>Dire pourquoi les deux protections vont ensemble : la case évite le doublon, le filtre évite l’absurde.</li><li>Dire ce que le filtre ne rattrape pas : un montant faux. Il vient de la saisie des prestations, et le contrôle se fait à la source, dans la base.</li></ol>
+    <div class="tip warn"><span class="tip-i">💶</span><div class="tip-c"><strong>Un filtre n’est pas un module</strong>
+Il ne coûte pas de crédit, et il évite ceux des modules qui suivent. La phrase du chapitre se prépare ici.</div></div>
+    <p class="hc2"><b>Hors champ :</b> Les fonctions de texte et les expressions complexes. Un filtre simple sur un nombre, pas une leçon de syntaxe.</p>
+    <h4>Les fichiers de cette leçon</h4>
+    <button class="dlb" data-nom="affaires.csv" onclick="tele(this)"><span class="dlb-i">⬇</span><span class="dlb-t"><b>Les affaires de pratique</b><span>À importer dans la table Affaires · affaires.csv · 1 Ko</span></span><script type="text/plain">77u/QWZmYWlyZSxDb250YWN0LFN0YXR1dCzDiWNow6lhbmNlLEVtYWlsIGNsaWVudCxNYXJnZSAo4oKsKSxOb3RlIGludGVybmUNCkRpYWdub3N0aWMgZGVzIGRldmlzLFNvZmlhbmUgUmluYWxkaSxUZXJtaW7DqWUsMjAyNi0xMC0wNixzLnJpbmFsZGlAcmluYWxkaS10cmFpdGV1ci5leGFtcGxlLDExMDAsIkxpdnLDqSwgw6AgZmFjdHVyZXIiDQpNaXNlIGVuIHBsYWNlIGR1IHN1aXZpIGRlIGNvbW1hbmRlcyxMZcOvbGEgQW1yYW5pLFRlcm1pbsOpZSwyMDI2LTEwLTA5LGNvbnRhY3RAYW1yYW5pLXRleHRpbGUuZXhhbXBsZSwyMzAwLCJMaXZyw6ksIMOgIGZhY3R1cmVyIg0KQ2FkcmFnZSBwcsOpbGltaW5haXJlIChvZmZlcnQpLEZhbm55IE5vZ3XDqHMsVGVybWluw6llLDIwMjYtMDktMjUsY29udGFjdEBmbGV1cnMtbm9ndWVzLmV4YW1wbGUsMCwiT2ZmZXJ0LCBuZSBwYXMgZmFjdHVyZXIiDQpQcmVtaWVyIGRpYWdub3N0aWMsU2FuZHJhIE1lcmNpZXIsVGVybWluw6llLDIwMjYtMDktMTgsY29tcHRhQG1lcmNpZXItb3B0aXF1ZS5leGFtcGxlLDc0MCxGYWN0dXLDqSBsZSBtb2lzIGRlcm5pZXINCg==</script></button>
+  </div>
+</div>
+<div class="lec" id="L08">
+  <div class="lec-h"><span class="lec-n">08</span><span class="lec-t">Repérer les retards</span><span class="lec-d">8 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d’ouverture</div><p>« Qui est en retard, et de combien ? Ce n’est pas une question pour l’IA. C’est une question pour une formule. »</p></div>
+    <dl class="ecr"><dt>À l’écran</dt><dd>Make, un second scénario vide, puis la table Factures.</dd><dt>Données</dt><dd>Les 8 factures de pratique : <b>factures-pratique.csv</b>. À la date du tournage, quatre ont une relance due : <b>1, 1, 2 et 3</b>.</dd><dt>Pourquoi dans la base</dt><dd>La règle des 7, 15 et 30 jours est écrite une fois, lisible par tous. Make ne fait que la lire.</dd><dt>Le réflexe à poser</dt><dd>On ne teste jamais l’égalité sur un jour : avec « retard = 7 », un jour sauté et la relance ne part jamais. On teste <b>supérieur ou égal</b>, et on <b>mémorise le niveau</b>.</dd></dl>
+    <h4>Les gestes, dans l’ordre</h4>
+    <ol class="clics"><li>Ouvrir la table Factures et lire les colonnes <b>Jours de retard</b> et <b>Relance due</b>. Quatre lignes ont une relance due, les quatre autres zéro. Dire pourquoi : payée, pas assez en retard, déjà au niveau prévu, déjà au niveau maximum.</li><li>Créer le scénario <b>Relancer</b>.</li><li>Poser <b>Airtable › Search records</b> sur la table Factures, avec la formule ci-dessous.</li><li>Régler l’horloge : <b>tous les jours, à 8 h</b>. Dire le calcul : 30 réveils par mois, pas 2 880.</li><li>Exécuter une fois, dérouler la sortie : quatre factures, avec leur retard et leur relance due. Lire la sortie avant d’écrire la suite : la règle de la leçon 5.</li></ol>
+    <div class="cbx">
+  <div class="cbx-h"><span class="cbx-l">La formule de recherche</span>
+    <button class="cbx-b" onclick="cp(this,'d3')">Copier</button></div>
+  <pre id="d3" class="cbx-p">{Relance due} &gt; 0</pre>
+</div>
+    <div class="tip warn"><span class="tip-i">🚦</span><div class="tip-c"><strong>Le filtre est dans la recherche</strong>
+La formule joue le rôle du filtre de la leçon 7 : seules les factures à relancer arrivent jusqu’à l’IA. La phrase du chapitre se prépare ici.</div></div>
+    <div class="tip warn"><span class="tip-i">🔎</span><div class="tip-c"><strong>À vérifier avant la prise</strong>
+Les lignes 003, 004, 005 et 007 affichent Relance due = 1, 1, 2, 3. Toutes les autres, 0.</div></div>
+    <p class="hc2"><b>Hors champ :</b> Le langage de formule en entier. Le calcul se lit, il ne se refait pas ici.</p>
+    <h4>Les fichiers de cette leçon</h4>
+    <button class="dlb" onclick="dlCsv()"><span class="dlb-i">⬇</span><span class="dlb-t"><b>Les 8 factures de pratique</b><span>Dates calculées à partir d’aujourd’hui · factures-pratique.csv</span></span></button>
+  </div>
+</div>
+<div class="lec" id="L09">
+  <div class="lec-h"><span class="lec-n">09</span><span class="lec-t">Rédiger le ton, pas la décision</span><span class="lec-d">9 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d’ouverture</div><p>« La règle décide qui on relance. L’IA ne fait que choisir les mots. Et on ne l’envoie pas. »</p></div>
+    <dl class="ecr"><dt>À l’écran</dt><dd>Le scénario Relancer de la leçon 8, puis Gmail.</dd><dt>Données</dt><dd>Les quatre factures de la leçon 8 : <b>factures-pratique.csv</b>, et la trame du brouillon (blocs ci-dessous).</dd><dt>Pas de clé</dt><dd>Sur le plan gratuit, <b>Make fournit le modèle</b> : rien à coller. Si l’apprenant a un plan payant, il pourra brancher sa propre clé. Le dire en une phrase.</dd><dt>La règle propriétaire</dt><dd>C’est ici que s’énonce en entier la règle du parcours : <b>rien ne part sans relecture</b>. Ailleurs, on la rappellera en trois mots.</dd><dt>Pourquoi l’IA arrive ici</dt><dd>C’est le premier endroit du chapitre où il y a du texte à rédiger, avec un ton qui monte selon le retard.</dd></dl>
+    <h4>Les gestes, dans l’ordre</h4>
+    <ol class="clics"><li>Ajouter, après la recherche, un module de <b>Make AI Toolkit</b> qui répond à une consigne. Choisir le <b>fournisseur d’IA de Make</b> : pas de clé à coller.</li><li>Donner la consigne (bloc ci-dessous) : elle reçoit le client, la référence, le montant TTC, l’échéance, les jours de retard et la <b>relance due</b>. Le ton dépend de la relance due.</li><li>Exécuter : quatre sorties, une par facture. Lire les deux extrêmes, la relance 1 et la relance 3, et montrer comment le ton monte.</li><li>Ajouter <b>Gmail › Create a draft</b> : pas Send an email. Le dire en le choisissant. Connecter la boîte de test : l’écran d’autorisation Google s’affiche, compte déjà ouvert dans le navigateur. Destinataire ← Email client.</li><li>Exécuter, ouvrir Gmail : quatre brouillons. Relire l’un d’eux à l’écran. Fermer sans envoyer. Le dire.</li><li>Dire ce que l’IA n’a pas le droit de faire : annoncer des pénalités, un recouvrement, une date qu’on n’a pas fixée, un montant. C’est écrit dans la consigne, en négatif.</li><li>Expliquer pourquoi on ne franchit pas la ligne, même quand un client le demande.</li></ol>
+    <div class="analogy"><div class="al">✍️ Le comptable et la plume</div><p>Le comptable décide du calendrier : qui, quand, combien. La plume écrit la lettre. On ne demande pas à la plume de décider qu’il est temps de relancer. L’IA est la plume.</p></div>
+    <div class="cbx">
+  <div class="cbx-h"><span class="cbx-l">La trame du brouillon</span>
+    <button class="cbx-b" onclick="cp(this,'d4')">Copier</button></div>
+  <pre id="d4" class="cbx-p">Tu rédiges un message de relance de facture, pour le compte d&#x27;un
+consultant indépendant.
+
+Données :
+Client : {{client}}
+Facture : {{référence}}   Objet : {{objet}}
+Montant TTC : {{montant ttc}} euros   Échéance : {{échéance}}
+Jours de retard : {{jours de retard}}   Relance due : {{relance due}}
+
+Le ton dépend de la relance due :
+- 1 : courtois. Suppose un oubli. Rappelle la facture.
+- 2 : ferme et sobre. Demande une date de règlement précise.
+- 3 : formel. Dernier rappel, factuel, sans menace.
+
+Contraintes :
+- Vouvoiement. Entre 60 et 100 mots.
+- Citer la référence, le montant TTC et l&#x27;échéance, exactement.
+- Ne jamais annoncer de pénalités, de recouvrement ni de démarche juridique.
+- Ne jamais inventer une date, un montant ou un élément absent des données.
+- Terminer par une question unique.
+- Signer « [Prénom] ».</pre>
+</div>
+    <div class="cbx">
+  <div class="cbx-h"><span class="cbx-l">Le brouillon attendu, pour la facture 003 (relance 1)</span>
+    <button class="cbx-b" onclick="cp(this,'d5')">Copier</button></div>
+  <pre id="d5" class="cbx-p">Bonjour,
+
+Sauf erreur de ma part, la facture F-2026-003 de 2 880 euros TTC (Formation de l&#x27;équipe) est arrivée à échéance le [date d&#x27;échéance] et n&#x27;apparaît pas encore comme réglée. Il s&#x27;agit sans doute d&#x27;un oubli.
+
+Pouvez-vous me confirmer la date à laquelle le règlement sera effectué ?
+
+Bien cordialement,
+[Prénom]</pre>
+</div>
+    <div class="warning-big"><div class="wl">⚖️ La relance 3 n’est pas une mise en demeure</div>
+<p>Le troisième brouillon est un dernier rappel, factuel, sans menace. Une mise en demeure a des effets juridiques : elle ne se génère pas automatiquement, elle se décide et se rédige avec un humain. C’est le rôle de la case À escalader, à la leçon 10.</p></div>
+    <div class="tip warn"><span class="tip-i">🔎</span><div class="tip-c"><strong>À vérifier en répétition</strong>
+Le nom exact du module de Make AI Toolkit qui répond à une consigne libre, le modèle proposé par défaut, et le coût en crédits d’une relance. Ce dernier chiffre remplace l’estimation de la leçon 3.</div></div>
+    <p class="hc2"><b>Hors champ :</b> La comparaison entre modèles. L’envoi réel du message : le brouillon est le point final de la leçon, et c’est volontaire.</p>
+    <h4>Les fichiers de cette leçon</h4>
+    <button class="dlb" onclick="dlCsv()"><span class="dlb-i">⬇</span><span class="dlb-t"><b>Les 8 factures de pratique</b><span>Dates calculées à partir d’aujourd’hui · factures-pratique.csv</span></span></button>
+  </div>
+</div>
+<div class="lec" id="L10">
+  <div class="lec-h"><span class="lec-n">10</span><span class="lec-t">Traiter selon le retard, et se souvenir</span><span class="lec-d">9 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d’ouverture</div><p>« Une relance qui part deux fois est pire qu’une relance oubliée. Alors on mémorise. »</p></div>
+    <dl class="ecr"><dt>À l’écran</dt><dd>Le scénario de la leçon 9, puis Airtable.</dd><dt>Données</dt><dd>Les quatre factures : <b>factures-pratique.csv</b>, relance due 1, 1, 2 et 3.</dd><dt>Ce qu’on prouve</dt><dd>Deux choses : <b>le niveau 3 est traité autrement</b>, et <b>une seconde exécution ne relance plus personne</b>.</dd></dl>
+    <h4>Les gestes, dans l’ordre</h4>
+    <ol class="clics"><li>Ajouter un <b>routeur</b> après le brouillon Gmail.</li><li>Branche 1, <b>Relance 1 ou 2</b> : la relance due est inférieure ou égale à 2. Action : <b>Airtable › Update a record</b> sur la facture : Niveau de relance ← relance due ; Dernière relance ← la date du jour.</li><li>Branche 2, <b>Relance 3</b> : la relance due vaut 3. Même mise à jour, <b>plus À escalader ← cochée</b>.</li><li>Dire pourquoi la mise à jour vient en dernier : le niveau n’avance que si le brouillon a été créé. Un brouillon qui échoue se retente demain. Un niveau avancé trop tôt ferait perdre la relance.</li><li>Exécuter. Montrer les quatre lignes dans Airtable : niveaux 1, 1, 2 et 3, dernières relances à la date du jour, <b>une seule case À escalader cochée</b>.</li><li><b>Relancer le scénario</b> : la recherche ne ramène plus rien, la relance due est à 0 partout. C’est la preuve qu’il ne relance pas deux fois.</li><li>Dans Airtable, créer la vue <b>À escalader</b>, filtrée sur la case cochée : la liste de ce qui demande une décision humaine.</li></ol>
+    <div class="tip warn"><span class="tip-i">🧹</span><div class="tip-c"><strong>À faire entre la leçon 9 et la leçon 10</strong>
+Vider les brouillons de la boîte de test avant d’exécuter : sinon Gmail en montre huit.</div></div>
+    <div class="tip warn"><span class="tip-i">↩️</span><div class="tip-c"><strong>À faire avant la leçon 11</strong>
+Vider la table Factures et réimporter le fichier des 8 factures : le scénario cassé a besoin de factures à relancer.</div></div>
+    <p class="hc2"><b>Hors champ :</b> Les routeurs à cinq branches et les agrégateurs. Deux branches, deux traitements, et on passe.</p>
+    <h4>Les fichiers de cette leçon</h4>
+    <button class="dlb" onclick="dlCsv()"><span class="dlb-i">⬇</span><span class="dlb-t"><b>Les 8 factures de pratique</b><span>Dates calculées à partir d’aujourd’hui · factures-pratique.csv</span></span></button>
+  </div>
+</div>
+<h3>Partie 3 — Fiabiliser et livrer</h3>
+
+<div class="lec" id="L11">
+  <div class="lec-h"><span class="lec-n">11</span><span class="lec-t">Quand ça casse, et la checklist</span><span class="lec-d">9 min</span></div>
+  <div class="lec-b">
+    <div class="say"><div class="sl">La phrase d’ouverture</div><p>« Ça va casser. La question c’est : est-ce que tu le sauras ? »</p></div>
+    <dl class="ecr"><dt>À l’écran</dt><dd>Le scénario Relancer volontairement cassé, préparé avant.</dd><dt>Comment il est cassé</dt><dd>Dans <b>Airtable › Update a record</b> (branche Relance 1 ou 2), le champ <b>Dernière relance</b> (type date) reçoit le champ <b>Objet</b> (du texte). Airtable refuse la valeur et l’exécution s’arrête là. <b>Le brouillon, lui, a déjà été créé.</b></dd><dt>Données</dt><dd>Des factures à relancer : <b>factures-pratique.csv</b>, réimporté après la leçon 10.</dd><dt>Les chiffres à reprendre</dt><dd>Les deux temps chronométrés en leçon 4, les <b>2 880 crédits</b> de la leçon 3 et le coût réel d’un passage relevé en répétition.</dd></dl>
+    <h4>Les gestes, dans l’ordre</h4>
+    <ol class="clics"><li>Lancer le scénario cassé. Laisser l’erreur tomber.</li><li>Ouvrir l’historique, cliquer sur l’exécution en échec, dérouler les bulles.</li><li>Montrer où ça casse, et ce que disait le module précédent : la sortie qu’on a appris à lire en leçon 5.</li><li>Lire le message d’erreur tel qu’il s’affiche. Ne pas l’annoncer de mémoire.</li><li><b>Ouvrir Airtable : le niveau n’a pas avancé. Ouvrir Gmail : le brouillon existe.</b> Dire : sans correction, il y en aurait un deuxième demain. Et dire que rien n’est parti : c’est la règle de la leçon 9 qui protège ici.</li><li>Corriger le mapping, relancer, voir passer.</li><li>Poser un gestionnaire d’erreurs sur le module.</li><li>Dérouler les trois causes de crédits qui filent, puis montrer le tableau de consommation et où régler l’alerte.</li><li>Reprendre les deux chiffres de la leçon 4 et dire ce qu’on a supprimé comme travail : le calcul, la saisie et la revue des retards. Pas la décision d’envoyer.</li></ol>
+    <h4>Les trois causes de crédits qui filent</h4>
+<div class="vg">
+  <div class="vc"><div class="vt">Déclencheur trop fréquent</div><div class="vd">Les 96 réveils par jour de la leçon 3 : 2 880 crédits par mois pour une relance qui se fait une fois par jour. C’est ce qu’aurait coûté un réglage « toutes les 15 minutes ».</div></div>
+  <div class="vc"><div class="vt">Boucle non maîtrisée</div><div class="vd">Un module qui tourne autant de fois qu’il y a d’éléments. Une recherche sans formule ramènerait toutes les factures, chaque matin, et la chaîne repasserait sur chacune.</div></div>
+  <div class="vc"><div class="vt">IA appelée trop tôt</div><div class="vd">Un module d’IA exécuté sur une facture qui n’avait rien à relancer, alors que la formule de recherche suffisait à l’écarter.</div></div>
+</div>
+<div class="tip err"><span class="tip-i">❗</span><div class="tip-c"><strong>La règle qui en découle</strong>
+On filtre AVANT d’appeler l’IA, jamais après. C’est la phrase à retenir de tout le chapitre.</div></div>
+<div class="prereq"><div class="pl">✔️ La checklist avant de livrer à un client</div>
+<ul>
+  <li>Les montants et les dates sont-ils calculés, jamais écrits par l’IA ?</li>
+  <li>Une même facture peut-elle être émise ou relancée deux fois ? La case Facturée et le niveau mémorisé l’empêchent-ils ?</li>
+  <li>Chaque passage laisse-t-il une trace dans la base ?</li>
+  <li>Rien ne part sans relecture : brouillon, jamais envoi ?</li>
+  <li>L’horloge réveille-t-elle chaque scénario à la bonne fréquence, pas toutes les 15 minutes ?</li>
+  <li>Le coût d’un passage est-il mesuré, et une alerte de consommation réglée ?</li>
+</ul></div>
+<div class="tip ok"><span class="tip-i">✅</span><div class="tip-c"><strong>Make est bouclé</strong>
+Le chapitre suivant refait exactement ces deux scénarios, mais sur une instance qui appartient au client.</div></div>
+    <p class="hc2"><b>Hors champ :</b> Les gestionnaires d’erreurs avancés et les scénarios de reprise. On lit une erreur, on la corrige, on pose une alerte.</p>
+    <h4>Les fichiers de cette leçon</h4>
+    <button class="dlb" onclick="dlCsv()"><span class="dlb-i">⬇</span><span class="dlb-t"><b>Les 8 factures de pratique</b><span>Dates calculées à partir d’aujourd’hui · factures-pratique.csv</span></span></button>
+  </div>
+</div>
+</div>
+</div>
+<div class="footer">
+  <p><strong>⚙️ Livret de tournage — Make</strong></p>
+  <p>Studeria · parcours Focus outils · octobre 2026</p>
+</div>
+</div></div>
+
+<script>
+const links=document.querySelectorAll('.sidebar a');
+const chapters=document.querySelectorAll('.ch, .lec');
+function updateActive(){
+  let current='';
+  chapters.forEach(ch=>{if(ch.getBoundingClientRect().top<=150)current=ch.id;});
+  links.forEach(l=>{l.classList.toggle('active',l.getAttribute('href')==='#'+current);});
+}
+window.addEventListener('scroll',updateActive);updateActive();
+links.forEach(l=>l.addEventListener('click',()=>{
+  if(window.innerWidth<=800)document.querySelector('.sidebar').classList.remove('open');
+}));
+let DL=null;
+(async()=>{try{DL=await window.claude.use("downloads");}catch(e){DL=null;}})();
+async function tele(btn){
+  const b64=btn.querySelector("script").textContent.trim();
+  const bin=atob(b64);const u=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+  const blob=new Blob([u]);
+  const lbl=btn.querySelector(".dlb-t b");const o=lbl.textContent;
+  if(DL){
+    try{await DL.save({filename:btn.dataset.nom,data:blob});lbl.textContent="Enregistr\u00e9 \u2713";}
+    catch(e){lbl.textContent=(e&&e.code==="declined")?o:"Non enregistr\u00e9";}
+  }else{
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=btn.dataset.nom;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    lbl.textContent="T\u00e9l\u00e9charg\u00e9 \u2713";
+  }
+  setTimeout(()=>{lbl.textContent=o;},2200);
+}
+function cp(btn,id){
+  const t=document.getElementById(id).textContent;
+  const done=()=>{const o=btn.textContent;btn.textContent='Copie\u0301 \u2713';btn.classList.add('done');
+    setTimeout(()=>{btn.textContent=o;btn.classList.remove('done');},1600);};
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(done).catch(()=>fb());}
+  else fb();
+  function fb(){const a=document.createElement('textarea');a.value=t;a.style.position='fixed';
+    a.style.opacity='0';document.body.appendChild(a);a.select();
+    try{document.execCommand('copy');done();}catch(e){}document.body.removeChild(a);}
+}
+/* Les 8 factures de pratique, dates calculées à partir d’aujourd’hui, au moment du téléchargement */
+const FACT=[["Mercier Optique", "compta@mercier-optique.example", "Premier diagnostic", 1480, 5, "Émise", 0, null], ["Pressing Cherif", "nadia@pressing-cherif.example", "Diagnostic", 1200, -1, "Émise", 0, null], ["Perrot Menuiserie", "romain.perrot@perrot-menuiserie.example", "Formation de l’équipe", 2400, -9, "Émise", 0, null], ["Dubreuil Paysage", "claire@dubreuil-paysage.example", "Audit", 3500, -7, "Émise", 0, null], ["Gauthier & Filles", "thibault@gauthier-filles.example", "Refonte de process", 5200, -18, "Émise", 1, -11], ["Librairie Le Passage", "contact@librairielepassage.fr", "Audit", 850, -20, "Payée", 1, -13], ["Clinique des Tilleuls", "k.benaissa@cliniquedestilleuls.fr", "Diagnostic initial", 7900, -34, "Émise", 2, -19], ["Menuiserie Vasseur", "helene.vasseur@menuiserie-vasseur.fr", "Audit initial", 4200, -45, "Émise", 3, -15]];
+function pad(n){return String(n).padStart(2,'0');}
+function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function plus(d,n){return new Date(d.getFullYear(),d.getMonth(),d.getDate()+n,12,0,0);}
+function buildFact(){
+  const T=new Date();
+  const lines=['Client\tEmail client\tObjet\tMontant HT\t\u00c9mise le\t\u00c9ch\u00e9ance de paiement\tStatut\tNiveau de relance\tDerni\u00e8re relance'];
+  FACT.forEach(f=>{
+    const ech=plus(T,f[4]);
+    lines.push([f[0],f[1],f[2],f[3],iso(plus(ech,-30)),iso(ech),f[5],f[6],f[7]===null?'':iso(plus(T,f[7]))].join('\t'));
+  });
+  document.getElementById('dFactures').textContent=lines.join('\n');
+}
+const CSVS={"contacts.csv": "Nom,Société,Email,Téléphone,Ville\r\nSofiane Rinaldi,Rinaldi Traiteur,s.rinaldi@rinaldi-traiteur.example,06 21 33 74 18,Lille\r\nLeïla Amrani,Amrani Textile,contact@amrani-textile.example,06 44 90 12 85,Tourcoing\r\nFanny Noguès,Noguès Fleurs,contact@fleurs-nogues.example,06 52 08 37 61,Toulouse\r\nSandra Mercier,Mercier Optique,compta@mercier-optique.example,06 18 76 42 09,Bordeaux\r\n", "affaires.csv": "Affaire,Contact,Statut,Échéance,Email client,Marge (€),Note interne\r\nDiagnostic des devis,Sofiane Rinaldi,Terminée,2026-10-06,s.rinaldi@rinaldi-traiteur.example,1100,\"Livré, à facturer\"\r\nMise en place du suivi de commandes,Leïla Amrani,Terminée,2026-10-09,contact@amrani-textile.example,2300,\"Livré, à facturer\"\r\nCadrage préliminaire (offert),Fanny Noguès,Terminée,2026-09-25,contact@fleurs-nogues.example,0,\"Offert, ne pas facturer\"\r\nPremier diagnostic,Sandra Mercier,Terminée,2026-09-18,compta@mercier-optique.example,740,Facturé le mois dernier\r\n", "prestations.csv": "Ligne,Affaire,Quantité,Prix unitaire (€)\r\nEntretiens et audit des devis,Diagnostic des devis,1,1800\r\nModèle de devis réutilisable,Diagnostic des devis,1,900\r\nConstruction de la base,Mise en place du suivi de commandes,1,3200\r\nFormation de l'équipe,Mise en place du suivi de commandes,2,650\r\nDiagnostic,Premier diagnostic,1,1480\r\n"};
+function crc32(b){let c=-1;for(let i=0;i<b.length;i++){c^=b[i];for(let k=0;k<8;k++)c=(c>>>1)^(0xEDB88320&-(c&1));}return(c^-1)>>>0;}
+function makeZip(files){
+  const enc=new TextEncoder(),parts=[],central=[];let off=0;
+  const u16=n=>[n&255,(n>>8)&255],u32=n=>[n&255,(n>>8)&255,(n>>16)&255,(n>>>24)&255];
+  files.forEach(f=>{
+    const nm=enc.encode(f.name),d=f.data,crc=crc32(d);
+    const loc=new Uint8Array([0x50,0x4b,3,4,...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0x21),...u32(crc),...u32(d.length),...u32(d.length),...u16(nm.length),...u16(0)]);
+    parts.push(loc,nm,d);
+    central.push(new Uint8Array([0x50,0x4b,1,2,...u16(20),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0x21),...u32(crc),...u32(d.length),...u32(d.length),...u16(nm.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(off)]),nm);
+    off+=loc.length+nm.length+d.length;
+  });
+  const cs=central.reduce((a,x)=>a+x.length,0);
+  const end=new Uint8Array([0x50,0x4b,5,6,0,0,0,0,...u16(files.length),...u16(files.length),...u32(cs),...u32(off),0,0]);
+  return new Blob([...parts,...central,end],{type:'application/zip'});
+}
+function saveBlob(blob,name){
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+function dlZip(){
+  buildFact();
+  const enc=new TextEncoder(),bom='\ufeff';
+  const rows=document.getElementById('dFactures').textContent.split('\n').map(l=>l.split('\t'));
+  const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const fact=rows.map(r=>r.map(q).join(',')).join('\r\n');
+  const readme=['Pack de données de pratique, chapitre Make (facturation et relances)','',
+   'Importer dans Airtable, dans cet ordre. Chaque import a besoin que le précédent existe.','',
+   '1. contacts.csv : table Contacts, menu de la table > Import data > CSV file.',
+   '2. affaires.csv : table Affaires, même geste. Puis cocher à la main la case Facturée sur "Premier diagnostic".',
+   '3. prestations.csv : table Prestations, même geste.',
+   '4. factures-pratique.csv : nouvelle table, + Add or import > CSV file. Nommer la table Factures.','',
+   'Les dates des factures sont calculées à partir du jour du téléchargement. Les retards se calculent contre le jour même : importer au plus 5 jours avant le tournage, sinon vider la table Factures et réimporter un fichier téléchargé le jour J.','',
+   'Toutes les données sont fictives.'].join('\r\n');
+  const files=Object.keys(CSVS).map(n=>({name:n,data:enc.encode(bom+CSVS[n])}));
+  files.push({name:'factures-pratique.csv',data:enc.encode(bom+fact)});
+  files.push({name:'LISEZ-MOI.txt',data:enc.encode(bom+readme)});
+  saveBlob(makeZip(files),'MAKE-pack-donnees.zip');
+}
+function dlCsv(){
+  buildFact();
+  const rows=document.getElementById('dFactures').textContent.split('\n').map(l=>l.split('\t'));
+  const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const csv=rows.map(r=>r.map(q).join(',')).join('\r\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='factures-pratique.csv';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+</script>
+
+</body></html>
